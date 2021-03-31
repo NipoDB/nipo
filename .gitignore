@@ -17,8 +17,6 @@
 # vendor/
 
 nipo/nipo
-nipolib/go/sample/sample
-nipocli/nipocli
 
 # Ignored .idea
 .idea/
