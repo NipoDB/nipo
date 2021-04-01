@@ -140,8 +140,8 @@ you can define several users
 
 # CLI
 
-To introduce with CLI `nipocli` please visit the [LINK](https://github.com/nipo-db/nipocli).
+To introduce with CLI `nipocli` please visit the [LINK](https://github.com/NipoDB/nipocli).
 
 # GO library
 
-To introduce how to use nipo with GO please visit the [LINK](https://github.com/nipo-db/nipolib/tree/master/go).
+To introduce how to use nipo with GO please visit the [LINK](https://github.com/NipoDB/nipolib/tree/master/go).

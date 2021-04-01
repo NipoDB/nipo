@@ -17,6 +17,9 @@ type Cluster struct {
 	Status string
 }
 
+/*
+sync database to slave
+*/
 func (database *Database) SyncSlave(config *Config, slave *Slave) {
 	nipoConfig := nipo.CreateConfig(slave.Node.Token, slave.Node.Ip, slave.Node.Port)
 	database.Foreach(func(key, value string) {
@@ -27,6 +30,9 @@ func (database *Database) SyncSlave(config *Config, slave *Slave) {
 	})
 }
 
+/*
+returs the status of cluster and slaves in json format
+*/
 func (cluster *Cluster) GetStatus() string {
 	result := "{ "
 	for index, slave := range cluster.Slaves {
@@ -40,6 +46,9 @@ func (cluster *Cluster) GetStatus() string {
 	return result
 }
 
+/*
+create the cluster with config
+*/
 func (config *Config) CreateCluster() *Cluster {
 	cluster := Cluster{}
 	for _, slave := range config.Slaves {
@@ -53,6 +62,10 @@ func (config *Config) CreateCluster() *Cluster {
 	return &cluster
 }
 
+/*
+this function is the main of cluster, the health check and update state of cluster and slaves and 
+also syncing the slaves is controlled with this function
+*/
 func (database *Database) RunCluster(config *Config, cluster *Cluster) {
 	for {
 		for index, slave := range cluster.Slaves {
@@ -86,6 +99,10 @@ func (database *Database) RunCluster(config *Config, cluster *Cluster) {
 	}
 }
 
+/*
+sets the key and value on slaves of cluster
+called from cmdSet function on each set command execution
+*/
 func (cluster *Cluster) SetOnSlaves(config *Config, key, value string) bool {
 	for _, slave := range cluster.Slaves {
 		if slave.Status == "healthy" {
