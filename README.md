@@ -144,4 +144,4 @@ To introduce with CLI `nipocli` please visit the [LINK](https://github.com/NipoD
 
 # GO library
 
-To introduce how to use nipo with GO please visit the [LINK](https://github.com/NipoDB/nipolib/tree/master/go).
+To introduce how to use nipo with GO please visit the [LINK](https://github.com/NipoDB/nipolib/tree/master).
