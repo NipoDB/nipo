@@ -21,34 +21,28 @@ case $command in
 
   "install")
         ${package_manager} ${package}
-        if [ -d "/tmp/nipo" ]
+        if [ -d "/tmp/NipoDB" ]
         then
-            rm -fr /tmp/nipo
+            rm -fr /tmp/NipoDB
             echo remove old git repo 
         fi
         echo cloning the repository
-        git clone https://github.com/bashsiz/nipo.git /tmp/nipo
-        if [ ! -d "~/go/src/nipo" ]
-        then
-            echo copy nipo library to ~/go/src/
-            cp -r /tmp/nipo/nipolib/go/nipo ~/go/src/
-        else
-            echo git repo does not cloned completely
-            exit
-        fi
+        git clone https://github.com/NipoDB/nipo.git /tmp/NipoDB
+        echo get nipolib 
+        go get github.com/NipoDB/nipolib
         echo get yaml.v2 
         go get gopkg.in/yaml.v2
-        cd /tmp/nipo/nipo
+        cd /tmp/NipoDB/nipo
         echo building the go binary
         go build
         if [ -f "/usr/local/bin/nipo" ]
         then
             rm -f /usr/local/bin/nipo
             echo coping the binary to /usr/local/bin/
-            cp /tmp/nipo/nipo/nipo /usr/local/bin/
+            cp /tmp/NipoDB/nipo/nipo /usr/local/bin/
         else
             echo coping the binary to /usr/local/bin/
-            cp /tmp/nipo/nipo/nipo /usr/local/bin/
+            cp /tmp/NipoDB/nipo/nipo /usr/local/bin/
         fi
         
         if [ -d "/etc/nipo" ]
@@ -56,20 +50,20 @@ case $command in
             echo create config file
             rm -fr /etc/nipo
             mkdir /etc/nipo
-            cp /tmp/nipo/files/config/nipo-cfg.yaml /etc/nipo/
+            cp /tmp/NipoDB/files/config/nipo-cfg.yaml /etc/nipo/
         else
             echo create config file
             mkdir /etc/nipo
-            cp /tmp/nipo/files/config/nipo-cfg.yaml /etc/nipo/
+            cp /tmp/NipoDB/files/config/nipo-cfg.yaml /etc/nipo/
         fi
         if [ -f "/lib/systemd/system/nipo.service" ]
         then
             echo create service file
             rm -f /lib/systemd/system/nipo.service
-            cp /tmp/nipo/files/config/nipo.service /lib/systemd/system/
+            cp /tmp/NipoDB/files/config/nipo.service /lib/systemd/system/
         else
             echo create service file
-            cp /tmp/nipo/files/config/nipo.service /lib/systemd/system/
+            cp /tmp/NipoDB/files/config/nipo.service /lib/systemd/system/
         fi
         if [ -d "/var/log/nipo" ]
         then
@@ -79,9 +73,9 @@ case $command in
             mkdir /var/log/nipo
             touch /var/log/nipo/nipo.log
         fi
-        if [ -d "/tmp/nipo" ]
+        if [ -d "/tmp/NipoDB" ]
         then
-            rm -fr /tmp/nipo
+            rm -fr /tmp/NipoDB
             echo remove old git repo 
         fi
     ;;
@@ -97,10 +91,10 @@ case $command in
             echo removing /usr/local/bin/nipo
             rm -fr /usr/local/bin/nipo
         fi
-        if [ -d "/tmp/nipo" ]
+        if [ -d "/tmp/NipoDB" ]
         then
-            echo removing /tmp/nipo
-            rm -fr /tmp/nipo
+            echo removing /tmp/NipoDB
+            rm -fr /tmp/NipoDB
         fi
         if [ -d "/var/log/nipo" ]
         then

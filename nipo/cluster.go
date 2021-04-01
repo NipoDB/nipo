@@ -1,7 +1,7 @@
 package main
 
 import (
-	"nipo"
+	"github.com/NipoDB/nipolib"
 	"strconv"
 	"time"
 )
