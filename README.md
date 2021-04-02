@@ -19,7 +19,7 @@ Nipo supports several slaves and guaranties your slaves synchronization. It will
 
 Nipo is in-memory database and data will be lost if service stops.
 
-## How to Contributing?
+## How to Contribute?
 
 For Contributing into **nipo** project please read contributing rules in [CONTRIBUTING.md](/CONTRIBUTING.md)
 
