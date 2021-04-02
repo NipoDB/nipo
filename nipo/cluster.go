@@ -1,9 +1,10 @@
 package main
 
 import (
-	"github.com/NipoDB/nipolib"
 	"strconv"
 	"time"
+
+	nipo "github.com/NipoDB/nipolib"
 )
 
 type Slave struct {
@@ -31,7 +32,7 @@ func (database *Database) SyncSlave(config *Config, slave *Slave) {
 }
 
 /*
-returs the status of cluster and slaves in json format
+returns the status of cluster and slaves in json format
 */
 func (cluster *Cluster) GetStatus() string {
 	result := "{ "
@@ -63,7 +64,7 @@ func (config *Config) CreateCluster() *Cluster {
 }
 
 /*
-this function is the main of cluster, the health check and update state of cluster and slaves and 
+this function is the main of cluster, the health check and update state of cluster and slaves and
 also syncing the slaves is controlled with this function
 */
 func (database *Database) RunCluster(config *Config, cluster *Cluster) {
