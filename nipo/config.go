@@ -58,7 +58,7 @@ func ValidateConfig(config *Config) bool {
 	}
 	if config.Global.Authorization == "true" {
 		if len(config.Users) <= 0 {
-			config.logger("config incorrect : in case of Authorization is true you have to defne at least one user at Users section  ", 1)
+			config.logger("config incorrect : in case of Authorization is true you have to define at least one user at Users section  ", 1)
 			return false
 		} else {
 			for _, user := range config.Users {
