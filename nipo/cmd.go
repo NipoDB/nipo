@@ -178,7 +178,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 		switch cmdFields[0] {
 		case "count":
 			db = database.cmdCount(cmd)
-			break
 		case "set":
 			if config.Global.Authorization == "true" {
 				if validateCmd("set", user) {
@@ -203,7 +202,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 					config.logger(message, 1)
 				}
 			}
-			break
 		case "get":
 			if config.Global.Authorization == "true" {
 				if validateCmd("get", user) {
@@ -220,7 +218,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 			} else {
 				db = database.cmdGet(cmd)
 			}
-			break
 		case "select":
 			if config.Global.Authorization == "true" {
 				if validateCmd("select", user) {
@@ -237,7 +234,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 			} else {
 				db = database.cmdSelect(cmd)
 			}
-			break
 		case "sum":
 			if config.Global.Authorization == "true" {
 				if validateCmd("sum", user) {
@@ -254,7 +250,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 			} else {
 				db = database.cmdSum(cmd)
 			}
-			break
 		case "avg":
 			if config.Global.Authorization == "true" {
 				if validateCmd("avg", user) {
@@ -271,7 +266,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 			} else {
 				db = database.cmdAvg(cmd)
 			}
-			break
 		}
 	}
 	return db, message
