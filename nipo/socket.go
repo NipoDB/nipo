@@ -109,7 +109,7 @@ func (database *Database) HandleSocket(config *Config, cluster *Cluster, client 
 			}
 		} else {
 			config.logger("Wrong token "+strRemoteAddr, 1)
-			client.Connection.Close()
+			_ = client.Connection.Close()
 		}
 	} else {
 		cmd := ""
@@ -144,7 +144,7 @@ func (database *Database) Run(config *Config, cluster *Cluster) {
 	if config.Global.Master == "true" {
 		go database.RunCluster(config, cluster)
 	}
-	config.logger("Opennig Socket on "+config.Listen.Ip+":"+config.Listen.Port+"/"+config.Listen.Protocol, 1)
+	config.logger("Opening Socket on "+config.Listen.Ip+":"+config.Listen.Port+"/"+config.Listen.Protocol, 1)
 	socket, err := net.Listen(config.Listen.Protocol, config.Listen.Ip+":"+config.Listen.Port)
 	if err != nil {
 		config.logger("Error listening: "+err.Error(), 1)

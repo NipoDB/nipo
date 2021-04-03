@@ -104,7 +104,7 @@ func (database *Database) cmdSum(cmd string) *Database {
 	cmdFields := strings.Fields(cmd)
 	key := cmdFields[1]
 	db, err := database.Select(key)
-	returndb := CreateDatabase()
+	returnDB := CreateDatabase()
 	var sum float64 = 0
 	if err != nil {
 		fmt.Println(err)
@@ -113,8 +113,8 @@ func (database *Database) cmdSum(cmd string) *Database {
 		valFloat, _ := strconv.ParseFloat(value, 64)
 		sum = sum + valFloat
 	})
-	returndb.items[key] = fmt.Sprintf("%f", sum)
-	return returndb
+	returnDB.items[key] = fmt.Sprintf("%f", sum)
+	return returnDB
 }
 
 /*
@@ -164,7 +164,7 @@ func (database *Database) cmdCount(cmd string) *Database {
 
 /*
 the main function to handle the command
-checks the validation and autorization of user to access the keys and commands
+checks the validation and authorization of user to access the keys and commands
 */
 func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user *User) (*Database, string) {
 	config.logger("client executed command : "+cmd, 2)
@@ -178,7 +178,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 		switch cmdFields[0] {
 		case "count":
 			db = database.cmdCount(cmd)
-			break
 		case "set":
 			if config.Global.Authorization == "true" {
 				if validateCmd("set", user) {
@@ -203,7 +202,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 					config.logger(message, 1)
 				}
 			}
-			break
 		case "get":
 			if config.Global.Authorization == "true" {
 				if validateCmd("get", user) {
@@ -220,7 +218,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 			} else {
 				db = database.cmdGet(cmd)
 			}
-			break
 		case "select":
 			if config.Global.Authorization == "true" {
 				if validateCmd("select", user) {
@@ -237,7 +234,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 			} else {
 				db = database.cmdSelect(cmd)
 			}
-			break
 		case "sum":
 			if config.Global.Authorization == "true" {
 				if validateCmd("sum", user) {
@@ -254,7 +250,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 			} else {
 				db = database.cmdSum(cmd)
 			}
-			break
 		case "avg":
 			if config.Global.Authorization == "true" {
 				if validateCmd("avg", user) {
@@ -271,7 +266,6 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 			} else {
 				db = database.cmdAvg(cmd)
 			}
-			break
 		}
 	}
 	return db, message
