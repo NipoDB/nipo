@@ -23,7 +23,7 @@ func (database *Database) Get(key string) (string, bool) {
 /*
 sets the given key value
 */
-func (database *Database) Set(key string, value string) bool {
+func (database *Database) Set(key, value string) bool {
 	database.items[key] = value
 	rvalue, ok := database.Get(key)
 	if rvalue != value {
@@ -44,11 +44,11 @@ func (database *Database) Foreach(action func(string, string)) {
 /*
 select the keys and values which are matched in given regex
 */
-func (database *Database) Select(keyregex string) (*Database, error) {
+func (database *Database) Select(keyRegex string) (*Database, error) {
 	selected := CreateDatabase()
 	var err error
 	for key, value := range database.items {
-		matched, err := regexp.MatchString(keyregex, key)
+		matched, err := regexp.MatchString(keyRegex, key)
 		if err != nil {
 			return selected, err
 		}

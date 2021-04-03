@@ -1,10 +1,9 @@
 package main
 
 import (
+	nipo "github.com/NipoDB/nipolib"
 	"strconv"
 	"time"
-
-	nipo "github.com/NipoDB/nipolib"
 )
 
 type Slave struct {
