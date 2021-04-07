@@ -6,10 +6,17 @@
 5. Go to **NipoDB** path `cd src/github.com/NipoDB`
 6. Clone Forked Project in current path `git clone https://github.com/your_username/nipo.git`
 7. Go to **nipo** folder `cd nipo`
-8. Getting required packages via `go get ./...`
-9. Add remote `git remote add upstream https://github.com/NipoDB/nipo.git` to update your fork repo.
-10. Working on Project and send yours **PR**
+8. Change your branch to **dev** with `git checkout dev`
+9. Getting required packages via `go get ./...`
+10. Add remote `git remote add upstream https://github.com/NipoDB/nipo.git` to update your fork repo.
+11. Working on Project and send yours **PR**
 
 # Note
-- To check and update your forked repo before any changes use `git fetch upstream` - `git merge upstream/dev` - `git merge upstream/main`.
+- To check and update your forked repo before any changes use 
+  - `git fetch upstream` 
+  - `git merge upstream/dev` 
+  - `git merge upstream/main`
+  - If changed somethings via **merge**, push on your forked branch `git push origin dev` or `git push origin main` for updating your forked repo.
+ 
+- Work just on **dev** branch.
 - After change in any file **add/commit** your changes.
