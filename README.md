@@ -1,4 +1,4 @@
-![alt text](https://github.com/NipoDB/nipo/files/picture/Logo.jpg)
+![alt text](https://github.com/NipoDB/nipo/blob/dev/files/picture/Logo.jpg)
 
 # Welcome to NIPO
 
