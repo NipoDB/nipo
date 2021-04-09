@@ -4,10 +4,6 @@ import (
 	"regexp"
 )
 
-type Database struct {
-	items map[string]string
-}
-
 func CreateDatabase() *Database {
 	return &Database{items: map[string]string{}}
 }

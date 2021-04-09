@@ -182,7 +182,9 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 			if config.Global.Authorization == "true" {
 				if validateCmd("set", user) {
 					if validateKey(cmdFields[1], user) {
+						Lock.Lock()
 						db, ok = database.cmdSet(config, cluster, cmd)
+						Lock.Unlock()
 						if !ok {
 							message = "set failed by user " + user.Name + " for command : " + cmd
 							config.logger(message, 1)
@@ -196,7 +198,9 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 					config.logger(message, 1)
 				}
 			} else {
+				Lock.Lock()
 				db, ok = database.cmdSet(config, cluster, cmd)
+				Lock.Unlock()
 				if !ok {
 					message = "set failed by user " + user.Name + " for command : " + cmd
 					config.logger(message, 1)

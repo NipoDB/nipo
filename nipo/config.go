@@ -7,39 +7,6 @@ import (
 	"strconv"
 )
 
-type User struct {
-	Name, Token, Keys, Cmds string
-}
-
-type Node struct {
-	Id                             int
-	Ip, Port, Authorization, Token string
-}
-
-type Config struct {
-	Global struct {
-		Authorization, Master string
-		CheckInterval         int
-	}
-
-	Slaves []*Node
-
-	Proc struct {
-		Cores, Threads int
-	}
-
-	Listen struct {
-		Ip, Port, Protocol string
-	}
-
-	Log struct {
-		Level int
-		Path  string
-	}
-
-	Users []*User
-}
-
 func CreateConfig() *Config {
 	return &Config{}
 }

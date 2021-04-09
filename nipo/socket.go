@@ -13,17 +13,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
-	"sync"
 )
-
-var Wait sync.WaitGroup
-var Lock sync.Mutex
-
-type Client struct {
-	Connection net.Conn
-	User       User
-	Authorized bool
-}
 
 func CreateClient() *Client {
 	return &Client{}
@@ -163,9 +153,7 @@ func (database *Database) Run(config *Config, cluster *Cluster) {
 				if err != nil {
 					config.logger("Error accepting socket : "+err.Error(), 2)
 				}
-				Lock.Lock()
 				database.HandleSocket(config, cluster, client)
-				Lock.Unlock()
 			}
 		}()
 		Wait.Wait()
