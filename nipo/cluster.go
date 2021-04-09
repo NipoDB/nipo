@@ -6,17 +6,6 @@ import (
 	"time"
 )
 
-type Slave struct {
-	Node              *Node
-	Status, CheckedAt string
-	Database          *Database
-}
-
-type Cluster struct {
-	Slaves []Slave
-	Status string
-}
-
 /*
 sync database to slave
 */
