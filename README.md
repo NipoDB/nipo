@@ -1,3 +1,5 @@
+![alt text](https://github.com/NipoDB/nipo/blob/dev/files/picture/Logo.jpg)
+
 # Welcome to NIPO
 
 Nipo is a powerful, fast, multi-thread, clustered and in-memory key-value database, with ability to configure token and acl on commands and key-regexes written by GO.
