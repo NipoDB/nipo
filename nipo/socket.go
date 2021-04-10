@@ -50,8 +50,7 @@ func (database *Database) HandleSocket(config *Config, cluster *Cluster, client 
 	inputFields := strings.Fields(input)
 	if len(inputFields) >= 2 {
 		if inputFields[1] == "ping" {
-			_, _ = client.Connection.Write([]byte("pong"))
-			_, _ = client.Connection.Write([]byte("\n"))
+			_, _ = client.Connection.Write([]byte("pong\n"))
 			return
 		}
 		if inputFields[1] == "status" {
@@ -61,8 +60,7 @@ func (database *Database) HandleSocket(config *Config, cluster *Cluster, client 
 			} else {
 				status = "Not Clustered"
 			}
-			_, _ = client.Connection.Write([]byte(status))
-			_, _ = client.Connection.Write([]byte("\n"))
+			_, _ = client.Connection.Write([]byte(status+"\n"))
 			return
 		}
 		if inputFields[1] == "exit" {
