@@ -43,10 +43,12 @@ func validateKey(key string, user *User) bool {
 /*
 sets the key and value into database
 */
-func (database *Database) cmdSet(config *Config, cluster *Cluster, cmd string) (*Database, bool) {
+func (database *Database) cmdSet(cmd string) (*Database, bool) {
+	config := database.config
+	cluster := database.cluster
 	cmdFields := strings.Fields(cmd)
 	key := cmdFields[1]
-	db := CreateDatabase()
+	db := CreateTempDatabase()
 	ok := false
 	if len(cmdFields) >= 3 {
 		value := cmdFields[2]
@@ -70,7 +72,7 @@ gets the value of given keys, it will create a new databse as result
 */
 func (database *Database) cmdGet(cmd string) *Database {
 	cmdFields := strings.Fields(cmd)
-	db := CreateDatabase()
+	db := CreateTempDatabase()
 	for _, key := range cmdFields {
 		if cmdFields[0] != key {
 			value, ok := database.Get(key)
@@ -104,7 +106,7 @@ func (database *Database) cmdSum(cmd string) *Database {
 	cmdFields := strings.Fields(cmd)
 	key := cmdFields[1]
 	db, err := database.Select(key)
-	returnDB := CreateDatabase()
+	returnDB := CreateTempDatabase()
 	var sum float64 = 0
 	if err != nil {
 		fmt.Println(err)
@@ -125,7 +127,7 @@ func (database *Database) cmdAvg(cmd string) *Database {
 	cmdFields := strings.Fields(cmd)
 	key := cmdFields[1]
 	db, err := database.Select(key)
-	returnDB := CreateDatabase()
+	returnDB := CreateTempDatabase()
 	var sum float64 = 0
 	count := 0
 	if err != nil {
@@ -149,8 +151,7 @@ func (database *Database) cmdCount(cmd string) *Database {
 	cmdFields := strings.Fields(cmd)
 	key := cmdFields[1]
 	db, err := database.Select(key)
-	returnDB := CreateDatabase()
-	// var sum float64 = 0
+	returnDB := CreateTempDatabase()
 	count := 0
 	if err != nil {
 		fmt.Println(err)
@@ -166,12 +167,14 @@ func (database *Database) cmdCount(cmd string) *Database {
 the main function to handle the command
 checks the validation and authorization of user to access the keys and commands
 */
-func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user *User) (*Database, string) {
+func (database *Database) cmd(cmd string, user *User) (*Database, string) {
+	config := database.config
+	// cluster := database.cluster
 	config.logger("client executed command : "+cmd, 2)
 	config.logger("cmd.go - func cmd - with cmd : "+cmd, 2)
 	config.logger("cmd.go - func cmd - with user : "+user.Name, 2)
 	cmdFields := strings.Fields(cmd)
-	db := CreateDatabase()
+	db := CreateTempDatabase()
 	ok := false
 	message := ""
 	if len(cmdFields) >= 2 {
@@ -183,7 +186,7 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 				if validateCmd("set", user) {
 					if validateKey(cmdFields[1], user) {
 						Lock.Lock()
-						db, ok = database.cmdSet(config, cluster, cmd)
+						db, ok = database.cmdSet(cmd)
 						Lock.Unlock()
 						if !ok {
 							message = "set failed by user " + user.Name + " for command : " + cmd
@@ -199,7 +202,7 @@ func (database *Database) cmd(cmd string, config *Config, cluster *Cluster, user
 				}
 			} else {
 				Lock.Lock()
-				db, ok = database.cmdSet(config, cluster, cmd)
+				db, ok = database.cmdSet(cmd)
 				Lock.Unlock()
 				if !ok {
 					message = "set failed by user " + user.Name + " for command : " + cmd

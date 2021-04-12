@@ -10,18 +10,20 @@ var Lock sync.Mutex
 
 type Database struct {
 	items map[string]string
+	config 		*Config
+	cluster		*Cluster
 }
 
 type Client struct {
 	Connection net.Conn
-	User       User
+	User       	User
 	Authorized bool
 }
 
 type Slave struct {
-	Node              *Node
+	Node		*Node
 	Status, CheckedAt string
-	Database          *Database
+	Database	*Database
 }
 
 type Cluster struct {

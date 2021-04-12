@@ -2,9 +2,16 @@ package main
 
 import (
 	"regexp"
+	"os"
 )
 
 func CreateDatabase() *Database {
+	config := GetConfig(os.Args[1])
+	cluster := config.CreateCluster()
+	return &Database{items: map[string]string{}, config: config, cluster: cluster}
+}
+
+func CreateTempDatabase() *Database {
 	return &Database{items: map[string]string{}}
 }
 
@@ -41,7 +48,7 @@ func (database *Database) Foreach(action func(string, string)) {
 select the keys and values which are matched in given regex
 */
 func (database *Database) Select(keyRegex string) (*Database, error) {
-	selected := CreateDatabase()
+	selected := CreateTempDatabase()
 	var err error
 	for key, value := range database.items {
 		matched, err := regexp.MatchString(keyRegex, key)
