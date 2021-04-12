@@ -39,7 +39,9 @@ handles opened socket. after checking the authorization field at config, validat
 given token, checks the command fields count, executes the command, converts to json
 and finally writes on opened socket
 */
-func (database *Database) HandleSocket(config *Config, cluster *Cluster, client *Client) {
+func (database *Database) HandleSocket(client *Client) {
+	config := database.config
+	cluster := database.cluster
 	defer client.Connection.Close()
 	strRemoteAddr := client.Connection.RemoteAddr().String()
 	input, err := bufio.NewReader(client.Connection).ReadString('\n')
@@ -81,7 +83,7 @@ func (database *Database) HandleSocket(config *Config, cluster *Cluster, client 
 					cmd += " " + inputFields[n]
 				}
 			}
-			returneddb, message := database.cmd(cmd, config, cluster, &client.User)
+			returneddb, message := database.cmd(cmd, &client.User)
 			jsondb, err := json.Marshal(returneddb.items)
 			if message != "" {
 				_, _ = client.Connection.Write([]byte(message))
@@ -107,7 +109,7 @@ func (database *Database) HandleSocket(config *Config, cluster *Cluster, client 
 				cmd += " " + inputFields[n]
 			}
 		}
-		returneddb, message := database.cmd(cmd, config, cluster, &client.User)
+		returneddb, message := database.cmd(cmd, &client.User)
 		jsondb, err := json.Marshal(returneddb.items)
 		if message != "" {
 			_, _ = client.Connection.Write([]byte(message))
@@ -128,7 +130,9 @@ func (database *Database) HandleSocket(config *Config, cluster *Cluster, client 
 called from main function, runs the service, multi-thread and multi-process handles here
 calls the HandleSocket function
 */
-func (database *Database) Run(config *Config, cluster *Cluster) {
+func (database *Database) Run() {
+	config := database.config
+	cluster := database.cluster
 	if config.Global.Master == "true" {
 		go database.RunCluster(config, cluster)
 	}
@@ -151,7 +155,7 @@ func (database *Database) Run(config *Config, cluster *Cluster) {
 				if err != nil {
 					config.logger("Error accepting socket : "+err.Error(), 2)
 				}
-				database.HandleSocket(config, cluster, client)
+				database.HandleSocket(client)
 			}
 		}()
 		Wait.Wait()
