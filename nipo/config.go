@@ -7,10 +7,16 @@ import (
 	"strconv"
 )
 
+/*
+creates config object
+*/
 func CreateConfig() *Config {
 	return &Config{}
 }
 
+/*
+creates user object
+*/
 func CreateUser() *User {
 	return &User{}
 }

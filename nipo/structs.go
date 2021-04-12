@@ -8,38 +8,33 @@ import (
 var Wait sync.WaitGroup
 var Lock sync.Mutex
 
-type Database struct {
-	items map[string]string
-	config 		*Config
-	cluster		*Cluster
+/*
+defines a node
+*/
+type Node struct {
+	Id                             int
+	Ip, Port, Authorization, Token string
 }
 
+/*
+defines user
+*/
+type User struct {
+	Name, Token, Keys, Cmds string
+}
+
+/*
+each client is a connection with user and authorization definition
+*/
 type Client struct {
 	Connection net.Conn
 	User       	User
 	Authorized bool
 }
 
-type Slave struct {
-	Node		*Node
-	Status, CheckedAt string
-	Database	*Database
-}
-
-type Cluster struct {
-	Slaves []Slave
-	Status string
-}
-
-type User struct {
-	Name, Token, Keys, Cmds string
-}
-
-type Node struct {
-	Id                             int
-	Ip, Port, Authorization, Token string
-}
-
+/*
+contains all directives at config file 
+*/
 type Config struct {
 	Global struct {
 		Authorization, Master string
@@ -62,4 +57,33 @@ type Config struct {
 	}
 
 	Users []*User
+}
+
+/*
+defines slaves from config object
+*/
+type Slave struct {
+	Node		*Node
+	Status, CheckedAt string
+	Database	*Database
+}
+
+/*
+defines the cluster with slaves and status of cluster
+*/
+type Cluster struct {
+	Slaves []Slave
+	Status string
+}
+
+/*
+structure of main database. 
+items used for key-value map
+config contains the configuration file
+cluster contains the cluster definition
+*/
+type Database struct {
+	items map[string]string
+	config 		*Config
+	cluster		*Cluster
 }
