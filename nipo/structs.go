@@ -88,5 +88,4 @@ type Database struct {
 	config 		*Config
 	cluster		*Cluster
 	socket 		net.Listener
-	reloaded	bool
 }

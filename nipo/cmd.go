@@ -168,11 +168,9 @@ the main function to handle the command
 checks the validation and authorization of user to access the keys and commands
 */
 func (database *Database) cmd(cmd string, user *User) (*Database, string) {
-	config := database.config
-	// cluster := database.cluster
-	config.logger("client executed command : "+cmd, 2)
-	config.logger("cmd.go - func cmd - with cmd : "+cmd, 2)
-	config.logger("cmd.go - func cmd - with user : "+user.Name, 2)
+	database.config.logger("client executed command : "+cmd, 2)
+	database.config.logger("cmd.go - func cmd - with cmd : "+cmd, 2)
+	database.config.logger("cmd.go - func cmd - with user : "+user.Name, 2)
 	cmdFields := strings.Fields(cmd)
 	db := CreateTempDatabase()
 	ok := false
@@ -182,7 +180,7 @@ func (database *Database) cmd(cmd string, user *User) (*Database, string) {
 		case "count":
 			db = database.cmdCount(cmd)
 		case "set":
-			if config.Global.Authorization == "true" {
+			if database.config.Global.Authorization == "true" {
 				if validateCmd("set", user) {
 					if validateKey(cmdFields[1], user) {
 						Lock.Lock()
@@ -190,15 +188,15 @@ func (database *Database) cmd(cmd string, user *User) (*Database, string) {
 						Lock.Unlock()
 						if !ok {
 							message = "set failed by user " + user.Name + " for command : " + cmd
-							config.logger(message, 1)
+							database.config.logger(message, 1)
 						}
 					} else {
 						message = "User " + user.Name + " not allowed to use regex : " + cmdFields[1]
-						config.logger(message, 1)
+						database.config.logger(message, 1)
 					}
 				} else {
 					message = "User " + user.Name + " not allowed to use command : " + cmd
-					config.logger(message, 1)
+					database.config.logger(message, 1)
 				}
 			} else {
 				Lock.Lock()
@@ -206,69 +204,69 @@ func (database *Database) cmd(cmd string, user *User) (*Database, string) {
 				Lock.Unlock()
 				if !ok {
 					message = "set failed by user " + user.Name + " for command : " + cmd
-					config.logger(message, 1)
+					database.config.logger(message, 1)
 				}
 			}
 		case "get":
-			if config.Global.Authorization == "true" {
+			if database.config.Global.Authorization == "true" {
 				if validateCmd("get", user) {
 					if validateKey(cmdFields[1], user) {
 						db = database.cmdGet(cmd)
 					} else {
 						message = "User " + user.Name + " not allowed to use regex : " + cmdFields[1]
-						config.logger(message, 1)
+						database.config.logger(message, 1)
 					}
 				} else {
 					message = "User " + user.Name + " not allowed to use command : " + cmd
-					config.logger(message, 1)
+					database.config.logger(message, 1)
 				}
 			} else {
 				db = database.cmdGet(cmd)
 			}
 		case "select":
-			if config.Global.Authorization == "true" {
+			if database.config.Global.Authorization == "true" {
 				if validateCmd("select", user) {
 					if validateKey(cmdFields[1], user) {
 						db = database.cmdSelect(cmd)
 					} else {
 						message = "User " + user.Name + " not allowed to use regex : " + cmdFields[1]
-						config.logger(message, 1)
+						database.config.logger(message, 1)
 					}
 				} else {
 					message = "User " + user.Name + " not allowed to use command : " + cmd
-					config.logger(message, 1)
+					database.config.logger(message, 1)
 				}
 			} else {
 				db = database.cmdSelect(cmd)
 			}
 		case "sum":
-			if config.Global.Authorization == "true" {
+			if database.config.Global.Authorization == "true" {
 				if validateCmd("sum", user) {
 					if validateKey(cmdFields[1], user) {
 						db = database.cmdSum(cmd)
 					} else {
 						message = "User " + user.Name + " not allowed to use regex : " + cmdFields[1]
-						config.logger(message, 1)
+						database.config.logger(message, 1)
 					}
 				} else {
 					message = "User " + user.Name + " not allowed to use command : " + cmd
-					config.logger(message, 1)
+					database.config.logger(message, 1)
 				}
 			} else {
 				db = database.cmdSum(cmd)
 			}
 		case "avg":
-			if config.Global.Authorization == "true" {
+			if database.config.Global.Authorization == "true" {
 				if validateCmd("avg", user) {
 					if validateKey(cmdFields[1], user) {
 						db = database.cmdAvg(cmd)
 					} else {
 						message = "User " + user.Name + " not allowed to use regex : " + cmdFields[1]
-						config.logger(message, 1)
+						database.config.logger(message, 1)
 					}
 				} else {
 					message = "User " + user.Name + " not allowed to use command : " + cmd
-					config.logger(message, 1)
+					database.config.logger(message, 1)
 				}
 			} else {
 				db = database.cmdAvg(cmd)
