@@ -5,8 +5,11 @@ import (
 	"encoding/json"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 	"runtime"
 	"strings"
+	"reflect"
 )
 
 func CreateClient() *Client {
@@ -34,13 +37,11 @@ given token, checks the command fields count, executes the command, converts to 
 and finally writes on opened socket
 */
 func (database *Database) HandleSocket(client *Client) {
-	config := database.config
-	cluster := database.cluster
 	defer client.Connection.Close()
 	strRemoteAddr := client.Connection.RemoteAddr().String()
 	input, err := bufio.NewReader(client.Connection).ReadString('\n')
 	if err != nil {
-		config.logger("Read from socket error : "+err.Error(), 2)
+		database.config.logger("Read from socket error : "+err.Error(), 2)
 		return
 	}
 	inputFields := strings.Fields(input)
@@ -51,8 +52,8 @@ func (database *Database) HandleSocket(client *Client) {
 		}
 		if inputFields[1] == "status" {
 			status := ""
-			if config.Global.Master == "true" {
-				status = cluster.GetStatus()
+			if database.config.Cluster.Master == "true" {
+				status = database.cluster.GetStatus()
 			} else {
 				status = "Not Clustered"
 			}
@@ -60,16 +61,16 @@ func (database *Database) HandleSocket(client *Client) {
 			return
 		}
 		if inputFields[1] == "exit" {
-			config.logger("Client closed the connection from "+strRemoteAddr, 2)
+			database.config.logger("Client closed the connection from "+strRemoteAddr, 2)
 			return
 		}
 		if inputFields[1] == "EOF" {
-			config.logger("Client terminated the connection from "+strRemoteAddr, 2)
+			database.config.logger("Client terminated the connection from "+strRemoteAddr, 2)
 			return
 		}
 	}
-	if config.Global.Authorization == "true" {
-		if client.Validate(inputFields[0], config) {
+	if database.config.Global.Authorization == "true" {
+		if client.Validate(inputFields[0], database.config) {
 			cmd := ""
 			if len(inputFields) >= 3 {
 				cmd = inputFields[1]
@@ -80,19 +81,16 @@ func (database *Database) HandleSocket(client *Client) {
 			returneddb, message := database.cmd(cmd, &client.User)
 			jsondb, err := json.Marshal(returneddb.items)
 			if message != "" {
-				_, _ = client.Connection.Write([]byte(message))
-				_, _ = client.Connection.Write([]byte("\n"))
+				_, _ = client.Connection.Write([]byte(message+"\n"))
 			}
 			if err != nil {
-				config.logger("Error in converting to json : "+err.Error(), 1)
+				database.config.logger("Error in converting to json : "+err.Error(), 1)
 			}
 			if len(jsondb) > 2 {
-				_, _ = client.Connection.Write([]byte(message))
-				_, _ = client.Connection.Write(jsondb)
-				_, _ = client.Connection.Write([]byte("\n"))
+				_, _ = client.Connection.Write([]byte(string(jsondb)+"\n"))
 			}
 		} else {
-			config.logger("Wrong token "+strRemoteAddr, 1)
+			database.config.logger("Wrong token "+strRemoteAddr, 1)
 			_ = client.Connection.Close()
 		}
 	} else {
@@ -106,17 +104,51 @@ func (database *Database) HandleSocket(client *Client) {
 		returneddb, message := database.cmd(cmd, &client.User)
 		jsondb, err := json.Marshal(returneddb.items)
 		if message != "" {
-			_, _ = client.Connection.Write([]byte(message))
-			_, _ = client.Connection.Write([]byte("\n"))
+			_, _ = client.Connection.Write([]byte(message+"\n"))
 		}
 		if err != nil {
-			config.logger("Error in converting to json : "+err.Error(), 1)
+			database.config.logger("Error in converting to json : "+err.Error(), 1)
 		}
 		if len(jsondb) > 2 {
-			_, _ = client.Connection.Write([]byte(message))
-			_, _ = client.Connection.Write(jsondb)
-			_, _ = client.Connection.Write([]byte("\n"))
+			_, _ = client.Connection.Write([]byte(string(jsondb)+"\n"))
 		}
+	}
+}
+
+/*
+handles sighup from OS
+*/
+func (database *Database) HandleSigHup(){
+	for {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, syscall.SIGHUP)
+		for range c {
+			ok := false
+			tempConfig, ok = ReloadConfig(os.Args[1])
+			if ok {
+				if !reflect.DeepEqual(tempConfig, database.config) {
+					database.config = tempConfig
+					database.cluster = database.config.CreateCluster()
+					database.config.logger("Nipo reloaded", 1)
+					database.Run()
+				} else {
+					database.config.logger("Nipo NOT reloaded, config file does not changed", 1)
+				}
+			}
+		}
+	}
+}
+
+/*
+initialize the socket
+*/
+func (database *Database) InitSocket() {
+	var err error
+	database.config.logger("Opening Socket on "+database.config.Listen.Ip+":"+database.config.Listen.Port+"/"+database.config.Listen.Protocol, 1)
+	database.socket, err = net.Listen(database.config.Listen.Protocol, database.config.Listen.Ip+":"+database.config.Listen.Port)
+	if err != nil {
+		database.config.logger("Error listening: "+err.Error(), 1)
+		os.Exit(1)
 	}
 }
 
@@ -125,29 +157,21 @@ called from main function, runs the service, multi-thread and multi-process hand
 calls the HandleSocket function
 */
 func (database *Database) Run() {
-	config := database.config
-	cluster := database.cluster
-	if config.Global.Master == "true" {
-		go database.RunCluster(config, cluster)
-	}
-	config.logger("Opening Socket on "+config.Listen.Ip+":"+config.Listen.Port+"/"+config.Listen.Protocol, 1)
-	socket, err := net.Listen(config.Listen.Protocol, config.Listen.Ip+":"+config.Listen.Port)
-	if err != nil {
-		config.logger("Error listening: "+err.Error(), 1)
-		os.Exit(1)
-	}
-	defer socket.Close()
-	runtime.GOMAXPROCS(config.Proc.Cores)
-	for thread := 0; thread < config.Proc.Threads; thread++ {
+	tempConfig = database.config
+	go database.HandleSigHup()
+	go database.RunCluster()
+	defer database.socket.Close()
+	runtime.GOMAXPROCS(database.config.Proc.Cores)
+	for thread := 0; thread < database.config.Proc.Threads; thread++ {
 		Wait.Add(1)
 		go func() {
 			defer Wait.Done()
 			for {
 				client := CreateClient()
 				var err error
-				client.Connection, err = socket.Accept()
+				client.Connection, err = database.socket.Accept()
 				if err != nil {
-					config.logger("Error accepting socket : "+err.Error(), 2)
+					database.config.logger("Error accepting socket : "+err.Error(), 2)
 				}
 				database.HandleSocket(client)
 			}

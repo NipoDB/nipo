@@ -37,11 +37,14 @@ contains all directives at config file
 */
 type Config struct {
 	Global struct {
-		Authorization, Master string
-		CheckInterval         int
+		Authorization string
 	}
 
-	Slaves []*Node
+	Cluster struct {
+		Master 			string
+		CheckInterval	int
+		Slaves []*Node
+	}
 
 	Proc struct {
 		Cores, Threads int
@@ -58,6 +61,8 @@ type Config struct {
 
 	Users []*User
 }
+
+var tempConfig *Config
 
 /*
 defines slaves from config object
@@ -81,9 +86,12 @@ structure of main database.
 items used for key-value map
 config contains the configuration file
 cluster contains the cluster definition
+socket contains the listener definition
 */
 type Database struct {
 	items map[string]string
 	config 		*Config
 	cluster		*Cluster
+	socket 		net.Listener
+	reloaded	bool
 }
