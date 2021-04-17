@@ -55,36 +55,43 @@ func (config *Config) CreateCluster() *Cluster {
 this function is the main of cluster, the health check and update state of cluster and slaves and
 also syncing the slaves is controlled with this function
 */
-func (database *Database) RunCluster(config *Config, cluster *Cluster) {
-	for {
-		for index, slave := range cluster.Slaves {
-			nipoconfig := nipo.CreateConfig(slave.Node.Token, slave.Node.Ip, slave.Node.Port)
-			result, _ := nipo.Ping(nipoconfig)
-			if result == "pong\n" {
-				if slave.Status == "unhealthy" {
-					slave.Status = "recover"
-					config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" becomes healthy", 1)
-					config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" is in recovery", 1)
-					Lock.Lock()
-					database.SyncSlave(config, &slave)
-					Lock.Unlock()
-					slave.Status = "healthy"
-					config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" recovery compleated", 1)
-				}
-				cluster.Slaves[index].Status = "healthy"
-				cluster.Slaves[index].CheckedAt = time.Now().Format("2006-01-02 15:04:05.000")
-				cluster.Status = "healthy"
-			} else {
-				if slave.Status == "healthy" {
-					config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" becomes unhealthy", 1)
-				}
-				cluster.Slaves[index].Status = "unhealthy"
-				cluster.Slaves[index].CheckedAt = time.Now().Format("2006-01-02 15:04:05.000")
-				cluster.Status = "unhealthy"
-				config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" is not healthy", 2)
+func (database *Database) RunCluster() {
+	if database.config.Global.Master == "true" {
+		config := database.config
+		cluster := database.cluster
+		for {
+			if database.config.Global.Master == "false" {
+				break
 			}
+			for index, slave := range cluster.Slaves {
+				nipoconfig := nipo.CreateConfig(slave.Node.Token, slave.Node.Ip, slave.Node.Port)
+				result, _ := nipo.Ping(nipoconfig)
+				if result == "pong\n" {
+					if slave.Status == "unhealthy" {
+						slave.Status = "recover"
+						config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" becomes healthy", 1)
+						config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" is in recovery", 1)
+						Lock.Lock()
+						database.SyncSlave(config, &slave)
+						Lock.Unlock()
+						slave.Status = "healthy"
+						config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" recovery compleated", 1)
+					}
+					cluster.Slaves[index].Status = "healthy"
+					cluster.Slaves[index].CheckedAt = time.Now().Format("2006-01-02 15:04:05.000")
+					cluster.Status = "healthy"
+				} else {
+					if slave.Status == "healthy" {
+						config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" becomes unhealthy", 1)
+					}
+					cluster.Slaves[index].Status = "unhealthy"
+					cluster.Slaves[index].CheckedAt = time.Now().Format("2006-01-02 15:04:05.000")
+					cluster.Status = "unhealthy"
+					config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" is not healthy", 2)
+				}
+			}
+			time.Sleep(time.Duration(config.Global.CheckInterval) * time.Millisecond)
 		}
-		time.Sleep(time.Duration(config.Global.CheckInterval) * time.Millisecond)
 	}
 }
 

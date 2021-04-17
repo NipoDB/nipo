@@ -138,3 +138,25 @@ func GetConfig(path string) *Config {
 	config.logger("Reading config file on :"+path, 1)
 	return config
 }
+
+/*
+reads the config file and return the config object
+*/
+func ReloadConfig(path string) (*Config, bool) {
+	file, err := os.Open(path)
+	config := CreateConfig()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	decoder := yaml.NewDecoder(file)
+	err = decoder.Decode(&config)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if !ValidateConfig(config) {
+		return config, false
+	}
+	return config, true
+}

@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"net"
 	"os"
+	"os/signal"
+	"syscall"
 	"runtime"
 	"strings"
 )
@@ -121,22 +123,51 @@ func (database *Database) HandleSocket(client *Client) {
 }
 
 /*
+handles sighup from OS
+*/
+func (database *Database) HandleSigHup(){
+	for {
+		c := make(chan os.Signal, 1)
+		signal.Notify(c, syscall.SIGHUP)
+		for range c {
+			tempConfig, ok := ReloadConfig(os.Args[1])
+			if ok {
+				if &tempConfig != &database.config {
+					database.config = tempConfig
+					config := database.config
+					database.cluster = config.CreateCluster()
+					config.logger("Nipo reloaded", 1)
+					database.reloaded = true
+					database.Run()
+				}
+			}
+		}
+	}
+}
+
+/*
+initialize the socket
+*/
+func (database *Database) InitSocket() {
+	config := database.config
+	var err error
+	config.logger("Opening Socket on "+config.Listen.Ip+":"+config.Listen.Port+"/"+config.Listen.Protocol, 1)
+	database.socket, err = net.Listen(config.Listen.Protocol, config.Listen.Ip+":"+config.Listen.Port)
+	if err != nil {
+		config.logger("Error listening: "+err.Error(), 1)
+		os.Exit(1)
+	}
+}
+
+/*
 called from main function, runs the service, multi-thread and multi-process handles here
 calls the HandleSocket function
 */
 func (database *Database) Run() {
 	config := database.config
-	cluster := database.cluster
-	if config.Global.Master == "true" {
-		go database.RunCluster(config, cluster)
-	}
-	config.logger("Opening Socket on "+config.Listen.Ip+":"+config.Listen.Port+"/"+config.Listen.Protocol, 1)
-	socket, err := net.Listen(config.Listen.Protocol, config.Listen.Ip+":"+config.Listen.Port)
-	if err != nil {
-		config.logger("Error listening: "+err.Error(), 1)
-		os.Exit(1)
-	}
-	defer socket.Close()
+	go database.HandleSigHup()
+	go database.RunCluster()
+	defer database.socket.Close()
 	runtime.GOMAXPROCS(config.Proc.Cores)
 	for thread := 0; thread < config.Proc.Threads; thread++ {
 		Wait.Add(1)
@@ -145,7 +176,7 @@ func (database *Database) Run() {
 			for {
 				client := CreateClient()
 				var err error
-				client.Connection, err = socket.Accept()
+				client.Connection, err = database.socket.Accept()
 				if err != nil {
 					config.logger("Error accepting socket : "+err.Error(), 2)
 				}

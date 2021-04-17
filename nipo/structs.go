@@ -81,9 +81,12 @@ structure of main database.
 items used for key-value map
 config contains the configuration file
 cluster contains the cluster definition
+socket contains the listener definition
 */
 type Database struct {
 	items map[string]string
 	config 		*Config
 	cluster		*Cluster
+	socket 		net.Listener
+	reloaded	bool
 }
