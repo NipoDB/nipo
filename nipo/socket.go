@@ -52,7 +52,7 @@ func (database *Database) HandleSocket(client *Client) {
 		}
 		if inputFields[1] == "status" {
 			status := ""
-			if database.config.Master.Master == "true" {
+			if database.config.Cluster.Master == "true" {
 				status = database.cluster.GetStatus()
 			} else {
 				status = "Not Clustered"
@@ -132,14 +132,13 @@ func (database *Database) HandleSigHup(){
 			ok := false
 			tempConfig, ok = ReloadConfig(os.Args[1])
 			if ok {
-				if !reflect.DeepEqual(tempConfig,database.config) {
+				if !reflect.DeepEqual(tempConfig, database.config) {
 					database.config = tempConfig
-					config := database.config
-					database.cluster = config.CreateCluster()
-					config.logger("Nipo reloaded", 1)
+					database.cluster = database.config.CreateCluster()
+					database.config.logger("Nipo reloaded", 1)
 					database.Run()
 				} else {
-					database.config.logger("reload not started, config file does not changed", 1)
+					database.config.logger("Nipo NOT reloaded, config file does not changed", 1)
 				}
 			}
 		}

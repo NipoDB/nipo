@@ -40,12 +40,11 @@ type Config struct {
 		Authorization string
 	}
 
-	Master struct {
+	Cluster struct {
 		Master 			string
 		CheckInterval	int
+		Slaves []*Node
 	}
-
-	Slaves []*Node
 
 	Proc struct {
 		Cores, Threads int
@@ -94,4 +93,5 @@ type Database struct {
 	config 		*Config
 	cluster		*Cluster
 	socket 		net.Listener
+	reloaded	bool
 }

@@ -54,20 +54,20 @@ func ValidateConfig(config *Config) bool {
 			}
 		}
 	}
-	if !(config.Master.Master == "true" || config.Master.Master == "false") {
-		config.logger("config incorrect : at global section directive authorization value must be true or false  ", 1)
+	if !(config.Cluster.Master == "true" || config.Cluster.Master == "false") {
+		config.logger("config incorrect : at master section directive master value must be true or false  ", 1)
 		return false
 	}
-	if config.Master.Master == "true" {
-		if config.Master.CheckInterval <= 0 {
+	if config.Cluster.Master == "true" {
+		if config.Cluster.CheckInterval <= 0 {
 			config.logger("config incorrect : in case of master is true you have to define checkInterval (int) ", 1)
 			return false
 		}
-		if len(config.Slaves) <= 0 {
+		if len(config.Cluster.Slaves) <= 0 {
 			config.logger("config incorrect : in case of master is true you have to define at least one slave at slaves section  ", 1)
 			return false
 		} else {
-			for _, slave := range config.Slaves {
+			for _, slave := range config.Cluster.Slaves {
 				if !(slave.Id > 0) {
 					config.logger("config incorrect : at slaves section you must set id >= 1 (int) for each slave ", 1)
 					return false

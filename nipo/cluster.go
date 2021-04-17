@@ -4,7 +4,6 @@ import (
 	nipo "github.com/NipoDB/nipolib"
 	"strconv"
 	"time"
-	"reflect"
 )
 
 /*
@@ -41,7 +40,7 @@ create the cluster with config
 */
 func (config *Config) CreateCluster() *Cluster {
 	cluster := Cluster{}
-	for _, slave := range config.Slaves {
+	for _, slave := range config.Cluster.Slaves {
 		tempSlave := Slave{}
 		tempSlave.Node = slave
 		tempSlave.Status = "none"
@@ -57,12 +56,9 @@ this function is the main of cluster, the health check and update state of clust
 also syncing the slaves is controlled with this function
 */
 func (database *Database) RunCluster() {
-	if database.config.Master.Master == "true" {
+	if database.config.Cluster.Master == "true" {
 		for {
-			if database.config.Master.Master == "false" {
-				break
-			}
-			if !reflect.DeepEqual(tempConfig.Master,database.config.Master) {
+			if database.config.Cluster.Master == "false" {
 				break
 			}
 			for index, slave := range database.cluster.Slaves {
@@ -92,7 +88,7 @@ func (database *Database) RunCluster() {
 					database.config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" is not healthy", 2)
 				}
 			}
-			time.Sleep(time.Duration(database.config.Master.CheckInterval) * time.Millisecond)
+			time.Sleep(time.Duration(database.config.Cluster.CheckInterval) * time.Millisecond)
 		}
 	}
 }
@@ -112,9 +108,6 @@ func (cluster *Cluster) SetOnSlaves(config *Config, key, value string) bool {
 					config.logger("Set command on slave does not work correctly", 2)
 				}
 			}
-		}
-		if slave.Status == "unhealthy" {
-			slave.Database.Set(key, value)
 		}
 	}
 	return true

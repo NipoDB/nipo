@@ -37,6 +37,10 @@ Global section defines some global parameters
 
 Defines that the clients must work with token or not. If set "true" you have to define users section
 
+
+## cluster
+This section contains all directives related to cluster
+
 `master (string): [true/false]`
 
 Defines that this server has some slaves. If set "true" you have to define slaves section
@@ -47,12 +51,7 @@ Defines the interval of slaves healthcheck in milliseconds
 
     global:  
       authorization: false
-      master: true
-      checkinterval: 1000
 
-
-
-## slaves
 Slave section defines parameter about slaves of this server
 
 `id (int)` : defines the id of slave. Master will sync the slaves by id priority.
@@ -65,20 +64,22 @@ Slave section defines parameter about slaves of this server
 
 `token (string)` : in case of authorization is true, you need to define token
 
-
-    slaves:
-      - slave:
-        id : 1
-        ip : 127.0.0.1
-        port : 2324
-        authorization: false
-        token: 061b30a7-1a12-4280-8e3c-6bc9a19b1683
-      - slave:
-        id : 2
-        ip : 127.0.0.1
-        port : 2325
-        authorization: false
-        token: 061b30a7-1a12-4280-8e3c-6bc9a19b1683
+    cluster :
+      master: true
+      checkinterval: 1000
+      slaves:
+        - slave:
+          id : 1
+          ip : 127.0.0.1
+          port : 2324
+          authorization: false
+          token: 061b30a7-1a12-4280-8e3c-sd6f542sdf84
+        - slave:
+          id : 2
+          ip : 127.0.0.1
+          port : 2325
+          authorization: false
+          token: 061b30a7-1a12-4280-8e3c-6bc9a19b1683
 
 
 ## proc

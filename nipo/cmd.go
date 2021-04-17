@@ -44,8 +44,8 @@ func validateKey(key string, user *User) bool {
 sets the key and value into database
 */
 func (database *Database) cmdSet(cmd string) (*Database, bool) {
-	config := database.config
-	cluster := database.cluster
+	// config := database.config
+	// cluster := database.cluster
 	cmdFields := strings.Fields(cmd)
 	key := cmdFields[1]
 	db := CreateTempDatabase()
@@ -55,7 +55,7 @@ func (database *Database) cmdSet(cmd string) (*Database, bool) {
 		for n := 3; n < len(cmdFields); n++ {
 			value += " " + cmdFields[n]
 		}
-		cluster.SetOnSlaves(config, key, value)
+		database.cluster.SetOnSlaves(database.config, key, value)
 		ok = database.Set(key, value)
 		if !ok {
 			return db, false
