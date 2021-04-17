@@ -52,7 +52,7 @@ func (database *Database) HandleSocket(client *Client) {
 		}
 		if inputFields[1] == "status" {
 			status := ""
-			if database.config.Global.Master == "true" {
+			if database.config.Master.Master == "true" {
 				status = database.cluster.GetStatus()
 			} else {
 				status = "Not Clustered"
@@ -129,7 +129,8 @@ func (database *Database) HandleSigHup(){
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGHUP)
 		for range c {
-			tempConfig, ok := ReloadConfig(os.Args[1])
+			ok := false
+			tempConfig, ok = ReloadConfig(os.Args[1])
 			if ok {
 				if !reflect.DeepEqual(tempConfig,database.config) {
 					database.config = tempConfig
@@ -163,6 +164,7 @@ called from main function, runs the service, multi-thread and multi-process hand
 calls the HandleSocket function
 */
 func (database *Database) Run() {
+	tempConfig = database.config
 	go database.HandleSigHup()
 	go database.RunCluster()
 	defer database.socket.Close()

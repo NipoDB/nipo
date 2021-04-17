@@ -4,15 +4,17 @@
 # authorization (string): [true/false]
 # Defines that the clients must work with token or not. If set "true" you have to define users section
 
+global:  
+  authorization: false
+
 # master (string): [true/false]
 # Defines that this server has some slaves. If set "true" you have to define slaves section
 
 # checkinterval (int):
 # the interval of slaves healthcheck in milliseconds
 
-global:  
-  authorization: false
-  master: false
+master:
+  master: true
   checkinterval: 1000
 
 # Slave section defines parameter about slaves of this server

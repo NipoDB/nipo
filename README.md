@@ -5,6 +5,10 @@
 Nipo is a powerful, fast, multi-thread, clustered and in-memory key-value database, with ability to configure token and acl on commands and key-regexes written by GO.
 With several mathematical and aggregation functionalities on batch of keys and values.
 
+**Reloadable**
+
+Nipo understands reload and you can change the configuration without downtime
+
 **Fast**
 
 Nipo will give you up to **15K OPS** in single mode and up to **2.5K OPS** in cluster mode with 2 slaves.

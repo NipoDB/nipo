@@ -4,6 +4,7 @@ import (
 	nipo "github.com/NipoDB/nipolib"
 	"strconv"
 	"time"
+	"reflect"
 )
 
 /*
@@ -56,9 +57,12 @@ this function is the main of cluster, the health check and update state of clust
 also syncing the slaves is controlled with this function
 */
 func (database *Database) RunCluster() {
-	if database.config.Global.Master == "true" {
+	if database.config.Master.Master == "true" {
 		for {
-			if database.config.Global.Master == "false" {
+			if database.config.Master.Master == "false" {
+				break
+			}
+			if !reflect.DeepEqual(tempConfig.Master,database.config.Master) {
 				break
 			}
 			for index, slave := range database.cluster.Slaves {
@@ -88,7 +92,7 @@ func (database *Database) RunCluster() {
 					database.config.logger("slave by id : "+strconv.Itoa(slave.Node.Id)+" is not healthy", 2)
 				}
 			}
-			time.Sleep(time.Duration(database.config.Global.CheckInterval) * time.Millisecond)
+			time.Sleep(time.Duration(database.config.Master.CheckInterval) * time.Millisecond)
 		}
 	}
 }

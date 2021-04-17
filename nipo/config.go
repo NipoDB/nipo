@@ -54,12 +54,12 @@ func ValidateConfig(config *Config) bool {
 			}
 		}
 	}
-	if !(config.Global.Master == "true" || config.Global.Master == "false") {
+	if !(config.Master.Master == "true" || config.Master.Master == "false") {
 		config.logger("config incorrect : at global section directive authorization value must be true or false  ", 1)
 		return false
 	}
-	if config.Global.Master == "true" {
-		if config.Global.CheckInterval <= 0 {
+	if config.Master.Master == "true" {
+		if config.Master.CheckInterval <= 0 {
 			config.logger("config incorrect : in case of master is true you have to define checkInterval (int) ", 1)
 			return false
 		}

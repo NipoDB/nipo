@@ -37,8 +37,12 @@ contains all directives at config file
 */
 type Config struct {
 	Global struct {
-		Authorization, Master string
-		CheckInterval         int
+		Authorization string
+	}
+
+	Master struct {
+		Master 			string
+		CheckInterval	int
 	}
 
 	Slaves []*Node
@@ -58,6 +62,8 @@ type Config struct {
 
 	Users []*User
 }
+
+var tempConfig *Config
 
 /*
 defines slaves from config object
