@@ -81,16 +81,13 @@ func (database *Database) HandleSocket(client *Client) {
 			returneddb, message := database.cmd(cmd, &client.User)
 			jsondb, err := json.Marshal(returneddb.items)
 			if message != "" {
-				_, _ = client.Connection.Write([]byte(message))
-				_, _ = client.Connection.Write([]byte("\n"))
+				_, _ = client.Connection.Write([]byte(message+"\n"))
 			}
 			if err != nil {
 				database.config.logger("Error in converting to json : "+err.Error(), 1)
 			}
 			if len(jsondb) > 2 {
-				_, _ = client.Connection.Write([]byte(message))
-				_, _ = client.Connection.Write(jsondb)
-				_, _ = client.Connection.Write([]byte("\n"))
+				_, _ = client.Connection.Write([]byte(string(jsondb)+"\n"))
 			}
 		} else {
 			database.config.logger("Wrong token "+strRemoteAddr, 1)
@@ -107,16 +104,13 @@ func (database *Database) HandleSocket(client *Client) {
 		returneddb, message := database.cmd(cmd, &client.User)
 		jsondb, err := json.Marshal(returneddb.items)
 		if message != "" {
-			_, _ = client.Connection.Write([]byte(message))
-			_, _ = client.Connection.Write([]byte("\n"))
+			_, _ = client.Connection.Write([]byte(message+"\n"))
 		}
 		if err != nil {
 			database.config.logger("Error in converting to json : "+err.Error(), 1)
 		}
 		if len(jsondb) > 2 {
-			_, _ = client.Connection.Write([]byte(message))
-			_, _ = client.Connection.Write(jsondb)
-			_, _ = client.Connection.Write([]byte("\n"))
+			_, _ = client.Connection.Write([]byte(string(jsondb)+"\n"))
 		}
 	}
 }
