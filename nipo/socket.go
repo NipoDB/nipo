@@ -47,7 +47,10 @@ func (database *Database) HandleSocket(client *Client) {
 	inputFields := strings.Fields(input)
 	if len(inputFields) >= 2 {
 		if inputFields[1] == "ping" {
-			_, _ = client.Connection.Write([]byte("pong\n"))
+			_, err := client.Connection.Write([]byte("pong\n"))
+			if err != nil {
+				database.config.logger("Error on writing to connection", 1)
+			}
 			return
 		}
 		if inputFields[1] == "status" {
@@ -57,7 +60,10 @@ func (database *Database) HandleSocket(client *Client) {
 			} else {
 				status = "Not Clustered"
 			}
-			_, _ = client.Connection.Write([]byte(status+"\n"))
+			_, err := client.Connection.Write([]byte(status+"\n"))
+			if err != nil {
+				database.config.logger("Error on writing to connection", 1)
+			}
 			return
 		}
 		if inputFields[1] == "exit" {
@@ -81,13 +87,19 @@ func (database *Database) HandleSocket(client *Client) {
 			returneddb, message := database.cmd(cmd, &client.User)
 			jsondb, err := json.Marshal(returneddb.items)
 			if message != "" {
-				_, _ = client.Connection.Write([]byte(message+"\n"))
+				_, err := client.Connection.Write([]byte(message+"\n"))
+				if err != nil {
+					database.config.logger("Error on writing to connection", 1)
+				}
 			}
 			if err != nil {
 				database.config.logger("Error in converting to json : "+err.Error(), 1)
 			}
 			if len(jsondb) > 2 {
-				_, _ = client.Connection.Write([]byte(string(jsondb)+"\n"))
+				_, err := client.Connection.Write([]byte(string(jsondb)+"\n"))
+				if err != nil {
+					database.config.logger("Error on writing to connection", 1)
+				}
 			}
 		} else {
 			database.config.logger("Wrong token "+strRemoteAddr, 1)
@@ -104,13 +116,19 @@ func (database *Database) HandleSocket(client *Client) {
 		returneddb, message := database.cmd(cmd, &client.User)
 		jsondb, err := json.Marshal(returneddb.items)
 		if message != "" {
-			_, _ = client.Connection.Write([]byte(message+"\n"))
+			_, err := client.Connection.Write([]byte(message+"\n"))
+			if err != nil {
+				database.config.logger("Error on writing to connection", 1)
+			}
 		}
 		if err != nil {
 			database.config.logger("Error in converting to json : "+err.Error(), 1)
 		}
 		if len(jsondb) > 2 {
-			_, _ = client.Connection.Write([]byte(string(jsondb)+"\n"))
+			_, err := client.Connection.Write([]byte(string(jsondb)+"\n"))
+			if err != nil {
+				database.config.logger("Error on writing to connection", 1)
+			}
 		}
 	}
 }

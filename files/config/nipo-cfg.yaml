@@ -10,9 +10,9 @@ global:
 
 # Cluster section defines directives related to master/slave
 # All directives at this section handled by reload.
-# NOTE : to change all directives at master or slaves section, please do the followings
+# NOTE : to change all directives at cluster, please do the followings
 # 1 . put this server in single mode with changing the "master: false" then reload
-# 2 . change your directives and put the "master: true" ther reload again
+# 2 . change your directives and put the "master: true" then reload again
 
 # master (string): [true/false]
 # Defines that this server has some slaves. If set "true" you have to define slaves section
@@ -46,12 +46,14 @@ cluster:
 # cores (int) : the count of cores you want to used by nipo
 # threads (int) : the count of threads you want to created by nipo
 # NOTE : the best practice is using threads two times of cores
+
 proc:
   cores: 2
   threads: 4
 
 # Listen section defines parameters for used ip, port, protocol by nipo
 # NOTE : nipo currently used only tcp protocol
+
 listen:
   ip: 0.0.0.0
   port: 2323
@@ -63,6 +65,7 @@ listen:
 #   1 - info
 #   2 - debug
 # path (string) : defines the path of log file
+
 log:
   level: 1
   path: /var/log/nipo/nipo.log
@@ -76,6 +79,7 @@ log:
 #                 if you have several regexes you can separate them with delimiter "||"
 # cmds (string) : the list of commands that user should have access to execute
 #                 if you have several commands you can separate them with delimiter "||"
+
 users:
   - user:
     name: admin
