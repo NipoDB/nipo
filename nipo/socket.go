@@ -21,7 +21,7 @@ validate the client with given token
 */
 func (client *Client) Validate(token string, config *Config) bool {
 	client.Authorized = false
-	for _, tempuser := range config.Users {
+	for _, tempuser := range config.Acl.Users {
 		if token == tempuser.Token {
 			client.Authorized = true
 			client.User = *tempuser
@@ -75,7 +75,7 @@ func (database *Database) HandleSocket(client *Client) {
 			return
 		}
 	}
-	if database.config.Global.Authorization == "true" {
+	if database.config.Acl.Authorization == "true" {
 		if client.Validate(inputFields[0], database.config) {
 			cmd := ""
 			if len(inputFields) >= 3 {

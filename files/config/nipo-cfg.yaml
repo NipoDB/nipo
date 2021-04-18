@@ -1,12 +1,33 @@
 ---
-# Global section defines some global parameters
+# Acl section defines some acl parameters
 # All directives at this section handled by reload. change them and reload Nipo.
 
 # authorization (string): [true/false]
 # Defines that the clients must work with token or not. If set "true" you have to define users section
 
-global:  
-  authorization: false
+# Users section defines parameters for authorization. 
+# If authorization in acl section is true, this section had to be defined
+# you can define several users
+# name (string) : just is metadata for name of user
+# token (string) : used for authorization
+# keys (string) : the regex of keys which user should have access.
+#                 if you have several regexes you can separate them with delimiter "||"
+# cmds (string) : the list of commands that user should have access to execute
+#                 if you have several commands you can separate them with delimiter "||"
+
+acl:  
+  authorization: true
+  users:
+    - user:
+      name: admin
+      token: 061b30a7-1a12-4280-8e3c-6bc9a19b1683
+      keys: .*
+      cmds: all
+    - user:
+      name: readonly
+      token: 0517376d-49c1-40eb-a8fc-fd73b70a4ce9
+      keys: name.*||.*log.*
+      cmds: get||select||avg
 
 # Cluster section defines directives related to master/slave
 # All directives at this section handled by reload.
@@ -69,25 +90,3 @@ listen:
 log:
   level: 1
   path: /var/log/nipo/nipo.log
-
-# Users section defines parameters for authorization. 
-# If authorization in global section is true, this section had to be defined
-# you can define several users
-# name (string) : just is metadata for name of user
-# token (string) : used for authorization
-# keys (string) : the regex of keys which user should have access.
-#                 if you have several regexes you can separate them with delimiter "||"
-# cmds (string) : the list of commands that user should have access to execute
-#                 if you have several commands you can separate them with delimiter "||"
-
-users:
-  - user:
-    name: admin
-    token: 061b30a7-1a12-4280-8e3c-6bc9a19b1683
-    keys: .*
-    cmds: all
-  - user:
-    name: readonly
-    token: 0517376d-49c1-40eb-a8fc-fd73b70a4ce9
-    keys: name.*||.*log.*
-    cmds: get||select||avg

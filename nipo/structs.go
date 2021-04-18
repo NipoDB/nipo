@@ -36,8 +36,9 @@ type Client struct {
 contains all directives at config file 
 */
 type Config struct {
-	Global struct {
+	Acl struct {
 		Authorization string
+		Users []*User
 	}
 
 	Cluster struct {
@@ -58,8 +59,6 @@ type Config struct {
 		Level int
 		Path  string
 	}
-
-	Users []*User
 }
 
 var tempConfig *Config
