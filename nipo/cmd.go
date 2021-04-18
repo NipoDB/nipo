@@ -180,7 +180,7 @@ func (database *Database) cmd(cmd string, user *User) (*Database, string) {
 		case "count":
 			db = database.cmdCount(cmd)
 		case "set":
-			if database.config.Global.Authorization == "true" {
+			if database.config.Acl.Authorization == "true" {
 				if validateCmd("set", user) {
 					if validateKey(cmdFields[1], user) {
 						Lock.Lock()
@@ -208,7 +208,7 @@ func (database *Database) cmd(cmd string, user *User) (*Database, string) {
 				}
 			}
 		case "get":
-			if database.config.Global.Authorization == "true" {
+			if database.config.Acl.Authorization == "true" {
 				if validateCmd("get", user) {
 					if validateKey(cmdFields[1], user) {
 						db = database.cmdGet(cmd)
@@ -224,7 +224,7 @@ func (database *Database) cmd(cmd string, user *User) (*Database, string) {
 				db = database.cmdGet(cmd)
 			}
 		case "select":
-			if database.config.Global.Authorization == "true" {
+			if database.config.Acl.Authorization == "true" {
 				if validateCmd("select", user) {
 					if validateKey(cmdFields[1], user) {
 						db = database.cmdSelect(cmd)
@@ -240,7 +240,7 @@ func (database *Database) cmd(cmd string, user *User) (*Database, string) {
 				db = database.cmdSelect(cmd)
 			}
 		case "sum":
-			if database.config.Global.Authorization == "true" {
+			if database.config.Acl.Authorization == "true" {
 				if validateCmd("sum", user) {
 					if validateKey(cmdFields[1], user) {
 						db = database.cmdSum(cmd)
@@ -256,7 +256,7 @@ func (database *Database) cmd(cmd string, user *User) (*Database, string) {
 				db = database.cmdSum(cmd)
 			}
 		case "avg":
-			if database.config.Global.Authorization == "true" {
+			if database.config.Acl.Authorization == "true" {
 				if validateCmd("avg", user) {
 					if validateKey(cmdFields[1], user) {
 						db = database.cmdAvg(cmd)

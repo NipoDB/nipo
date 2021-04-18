@@ -25,16 +25,16 @@ func CreateUser() *User {
 validates the config file, syntax, values and logic of config file
 */
 func ValidateConfig(config *Config) bool {
-	if !(config.Global.Authorization == "true" || config.Global.Authorization == "false") {
+	if !(config.Acl.Authorization == "true" || config.Acl.Authorization == "false") {
 		config.logger("config incorrect : at global section directive authorization value must be true or false  ", 1)
 		return false
 	}
-	if config.Global.Authorization == "true" {
-		if len(config.Users) <= 0 {
+	if config.Acl.Authorization == "true" {
+		if len(config.Acl.Users) <= 0 {
 			config.logger("config incorrect : in case of Authorization is true you have to define at least one user at Users section  ", 1)
 			return false
 		} else {
-			for _, user := range config.Users {
+			for _, user := range config.Acl.Users {
 				if user.Name == "" {
 					config.logger("config incorrect : at users section user must have name ", 1)
 					return false
