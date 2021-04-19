@@ -142,7 +142,7 @@ func (database *Database) HandleSigHup(){
 		signal.Notify(c, syscall.SIGHUP)
 		for range c {
 			ok := false
-			tempConfig, ok = ReloadConfig(os.Args[1])
+			tempConfig, ok := ReloadConfig(os.Args[1])
 			if ok {
 				if !reflect.DeepEqual(tempConfig, database.config) {
 					database.config = tempConfig
@@ -150,7 +150,7 @@ func (database *Database) HandleSigHup(){
 					database.config.logger("Nipo reloaded", 1)
 					database.Run()
 				} else {
-					database.config.logger("Nipo NOT reloaded, config file does not changed", 1)
+					database.config.logger("Nipo NOT reloaded, config file does not changed ", 1)
 				}
 			}
 		}
@@ -175,7 +175,6 @@ called from main function, runs the service, multi-thread and multi-process hand
 calls the HandleSocket function
 */
 func (database *Database) Run() {
-	tempConfig = database.config
 	go database.HandleSigHup()
 	go database.RunCluster()
 	defer database.socket.Close()

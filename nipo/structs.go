@@ -61,8 +61,6 @@ type Config struct {
 	}
 }
 
-var tempConfig *Config
-
 /*
 defines slaves from config object
 */
