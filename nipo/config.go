@@ -26,7 +26,7 @@ validates the config file, syntax, values and logic of config file
 */
 func ValidateConfig(config *Config) bool {
 	if !(config.Acl.Authorization == "true" || config.Acl.Authorization == "false") {
-		config.logger("config incorrect : at global section directive authorization value must be true or false  ", 1)
+		config.logger("config incorrect : at acl section directive authorization value must be true or false  ", 1)
 		return false
 	}
 	if config.Acl.Authorization == "true" {
@@ -55,7 +55,7 @@ func ValidateConfig(config *Config) bool {
 		}
 	}
 	if !(config.Cluster.Master == "true" || config.Cluster.Master == "false") {
-		config.logger("config incorrect : at master section directive master value must be true or false  ", 1)
+		config.logger("config incorrect : at cluster section directive master value must be true or false  ", 1)
 		return false
 	}
 	if config.Cluster.Master == "true" {

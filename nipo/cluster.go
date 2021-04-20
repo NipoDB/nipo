@@ -106,6 +106,7 @@ func (cluster *Cluster) SetOnSlaves(config *Config, key, value string) bool {
 				_, ok := nipo.Set(nipoconfig, key, value)
 				if !ok {
 					config.logger("Set command on slave does not work correctly", 2)
+					return false
 				}
 			}
 		}

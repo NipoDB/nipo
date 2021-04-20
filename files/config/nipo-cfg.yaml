@@ -16,7 +16,7 @@
 #                 if you have several commands you can separate them with delimiter "||"
 
 acl:  
-  authorization: true
+  authorization: false
   users:
     - user:
       name: admin
