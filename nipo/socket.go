@@ -145,10 +145,17 @@ func (database *Database) HandleSigHup(){
 			tempConfig, ok := ReloadConfig(os.Args[1])
 			if ok {
 				if !reflect.DeepEqual(tempConfig, database.config) {
-					database.config = tempConfig
-					database.cluster = database.config.CreateCluster()
-					database.config.logger("Nipo reloaded", 1)
-					database.Run()
+					if !reflect.DeepEqual(tempConfig.Cluster, database.config.Cluster) {
+						database.config = tempConfig
+						database.cluster = database.config.CreateCluster()
+						database.config.logger("Nipo reloaded", 1)
+						database.Run(1)
+					} else {
+						database.config = tempConfig
+						database.cluster = database.config.CreateCluster()
+						database.config.logger("Nipo reloaded", 1)
+						database.Run(2)
+					}
 				} else {
 					database.config.logger("Nipo NOT reloaded, config file does not changed ", 1)
 				}
@@ -174,9 +181,11 @@ func (database *Database) InitSocket() {
 called from main function, runs the service, multi-thread and multi-process handles here
 calls the HandleSocket function
 */
-func (database *Database) Run() {
+func (database *Database) Run(state int) {
 	go database.HandleSigHup()
-	go database.RunCluster()
+	if state == 1 || state == 0 {
+		go database.RunCluster()
+	}
 	defer database.socket.Close()
 	runtime.GOMAXPROCS(database.config.Proc.Cores)
 	for thread := 0; thread < database.config.Proc.Threads; thread++ {

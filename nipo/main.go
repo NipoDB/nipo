@@ -3,5 +3,5 @@ package main
 func main() {
     database := CreateDatabase()
     database.InitSocket()
-    database.Run()
+    database.Run(0)
 }
