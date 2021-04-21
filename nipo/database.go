@@ -11,7 +11,7 @@ creates the main database contains config and cluster definition
 func CreateDatabase() *Database {
 	config := GetConfig(os.Args[1])
 	cluster := config.CreateCluster()
-	return &Database{items: map[string]string{}, config: config, cluster: cluster, reloaded: false}
+	return &Database{items: map[string]string{}, config: config, cluster: cluster}
 }
 
 /*
