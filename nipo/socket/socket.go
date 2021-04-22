@@ -1,4 +1,4 @@
-package main
+package socket
 
 import (
 	"bufio"
@@ -10,6 +10,8 @@ import (
 	"runtime"
 	"strings"
 	"reflect"
+
+	"github.com/NipoDB/nipo/nipo/structs"
 )
 
 func CreateClient() *Client {

@@ -1,10 +1,12 @@
-package main
+package config
 
 import (
 	"gopkg.in/yaml.v2"
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/NipoDB/nipo/nipo/structs"
 )
 
 /*

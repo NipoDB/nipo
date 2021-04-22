@@ -1,8 +1,10 @@
-package main
+package database
 
 import (
 	"regexp"
 	"os"
+
+	"github.com/NipoDB/nipo/nipo/config"
 )
 
 /*
