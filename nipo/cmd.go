@@ -8,6 +8,27 @@ import (
 )
 
 /*
+change proc config of database
+*/
+func (database *Database) setProcCmd(cmd string) *Database {
+	var err error
+	cmds := strings.Split(cmd, " ")
+
+	core, err := strconv.Atoi(cmds[0])
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	thread, err := strconv.Atoi(cmds[1])
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	database.SetProc(core, thread)
+	return database
+}
+
+/*
 validates that user have permission to run the command or not
 */
 func validateCmd(cmd string, user *User) bool {
@@ -272,6 +293,8 @@ func (database *Database) cmd(cmd string, user *User) (*Database, string) {
 			} else {
 				db = database.cmdAvg(cmd)
 			}
+		case "setproc":
+			db = database.setProcCmd(cmd)
 		}
 	}
 	return db, message
