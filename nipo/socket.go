@@ -6,10 +6,10 @@ import (
 	"net"
 	"os"
 	"os/signal"
-	"syscall"
+	"reflect"
 	"runtime"
 	"strings"
-	"reflect"
+	"syscall"
 )
 
 func CreateClient() *Client {
@@ -60,7 +60,7 @@ func (database *Database) HandleSocket(client *Client) {
 			} else {
 				status = "Not Clustered"
 			}
-			_, err := client.Connection.Write([]byte(status+"\n"))
+			_, err := client.Connection.Write([]byte(status + "\n"))
 			if err != nil {
 				database.config.logger("Error on writing to connection", 1)
 			}
@@ -87,7 +87,7 @@ func (database *Database) HandleSocket(client *Client) {
 			returneddb, message := database.cmd(cmd, &client.User)
 			jsondb, err := json.Marshal(returneddb.items)
 			if message != "" {
-				_, err := client.Connection.Write([]byte(message+"\n"))
+				_, err := client.Connection.Write([]byte(message + "\n"))
 				if err != nil {
 					database.config.logger("Error on writing to connection", 1)
 				}
@@ -96,7 +96,7 @@ func (database *Database) HandleSocket(client *Client) {
 				database.config.logger("Error in converting to json : "+err.Error(), 1)
 			}
 			if len(jsondb) > 2 {
-				_, err := client.Connection.Write([]byte(string(jsondb)+"\n"))
+				_, err := client.Connection.Write([]byte(string(jsondb) + "\n"))
 				if err != nil {
 					database.config.logger("Error on writing to connection", 1)
 				}
@@ -116,7 +116,7 @@ func (database *Database) HandleSocket(client *Client) {
 		returneddb, message := database.cmd(cmd, &client.User)
 		jsondb, err := json.Marshal(returneddb.items)
 		if message != "" {
-			_, err := client.Connection.Write([]byte(message+"\n"))
+			_, err := client.Connection.Write([]byte(message + "\n"))
 			if err != nil {
 				database.config.logger("Error on writing to connection", 1)
 			}
@@ -125,7 +125,7 @@ func (database *Database) HandleSocket(client *Client) {
 			database.config.logger("Error in converting to json : "+err.Error(), 1)
 		}
 		if len(jsondb) > 2 {
-			_, err := client.Connection.Write([]byte(string(jsondb)+"\n"))
+			_, err := client.Connection.Write([]byte(string(jsondb) + "\n"))
 			if err != nil {
 				database.config.logger("Error on writing to connection", 1)
 			}
@@ -136,7 +136,7 @@ func (database *Database) HandleSocket(client *Client) {
 /*
 handles sighup from OS
 */
-func (database *Database) HandleSigHup(){
+func (database *Database) HandleSigHup() {
 	for {
 		c := make(chan os.Signal, 1)
 		signal.Notify(c, syscall.SIGHUP)
