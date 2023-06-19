@@ -1,8 +1,8 @@
 package main
 
 import (
-	"sync"
 	"net"
+	"sync"
 )
 
 var Wait sync.WaitGroup
@@ -28,23 +28,23 @@ each client is a connection with user and authorization definition
 */
 type Client struct {
 	Connection net.Conn
-	User       	User
+	User       User
 	Authorized bool
 }
 
 /*
-contains all directives at config file 
+contains all directives at config file
 */
 type Config struct {
 	Acl struct {
 		Authorization string
-		Users []*User
+		Users         []*User
 	}
 
 	Cluster struct {
-		Master 			string
-		CheckInterval	int
-		Slaves []*Node
+		Master        string
+		CheckInterval int
+		Slaves        []*Node
 	}
 
 	Proc struct {
@@ -65,9 +65,9 @@ type Config struct {
 defines slaves from config object
 */
 type Slave struct {
-	Node		*Node
+	Node              *Node
 	Status, CheckedAt string
-	Database	*Database
+	Database          *Database
 }
 
 /*
@@ -79,15 +79,16 @@ type Cluster struct {
 }
 
 /*
-structure of main database. 
+structure of main database.
 items used for key-value map
 config contains the configuration file
 cluster contains the cluster definition
 socket contains the listener definition
 */
 type Database struct {
-	items map[string]string
-	config 		*Config
-	cluster		*Cluster
-	socket 		net.Listener
+	items    map[string]string
+	config   *Config
+	cluster  *Cluster
+	socket   net.Listener
+	reloaded bool
 }

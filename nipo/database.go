@@ -1,8 +1,8 @@
 package main
 
 import (
-	"regexp"
 	"os"
+	"regexp"
 )
 
 /*
@@ -66,4 +66,13 @@ func (database *Database) Select(keyRegex string) (*Database, error) {
 		}
 	}
 	return selected, err
+}
+
+/*
+for change core and thread number directly in cmd.
+*/
+func (database *Database) SetProc(core, thread int) bool {
+	database.config.Proc.Cores = core
+	database.config.Proc.Threads = thread
+	return true
 }

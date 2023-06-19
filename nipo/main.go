@@ -1,7 +1,7 @@
 package main
 
 func main() {
-    database := CreateDatabase()
-    database.InitSocket()
-    database.Run(0)
+	database := CreateDatabase()
+	database.InitSocket()
+	database.Run(0)
 }
